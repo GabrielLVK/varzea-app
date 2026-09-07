@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import { Bell } from 'lucide-react'
+import Link from 'next/link'
+import { Bell, KeyRound } from 'lucide-react'
 
 export function TournamentHeader({
   status = 'Fase de Grupos · Rodada 4',
@@ -28,13 +29,22 @@ export function TournamentHeader({
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          aria-label="Notificações"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-foreground/15 ring-1 ring-primary-foreground/20 transition-colors hover:bg-primary-foreground/25"
-        >
-          <Bell className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/login"
+            className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 px-3 py-2 text-xs font-semibold ring-1 ring-primary-foreground/20 transition-colors hover:bg-primary-foreground/25"
+          >
+            <KeyRound className="h-4 w-4" />
+            Área do ADM
+          </Link>
+          <button
+            type="button"
+            aria-label="Notificações"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-foreground/15 ring-1 ring-primary-foreground/20 transition-colors hover:bg-primary-foreground/25"
+          >
+            <Bell className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary-foreground/15 px-3 py-1.5 ring-1 ring-primary-foreground/20">
