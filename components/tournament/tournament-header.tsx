@@ -1,7 +1,11 @@
 import Image from 'next/image'
 import { Bell } from 'lucide-react'
 
-export function TournamentHeader() {
+export function TournamentHeader({
+  status = 'Fase de Grupos · Rodada 4',
+}: {
+  status?: string
+}) {
   return (
     <header className="bg-primary text-primary-foreground px-5 pt-8 pb-6 rounded-b-3xl">
       <div className="flex items-center justify-between">
@@ -38,9 +42,7 @@ export function TournamentHeader() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-foreground opacity-75" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-primary-foreground" />
         </span>
-        <span className="text-xs font-semibold">
-          Fase de Grupos · Rodada 4
-        </span>
+        <span className="text-xs font-semibold">{status}</span>
       </div>
     </header>
   )
