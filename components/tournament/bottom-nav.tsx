@@ -10,8 +10,8 @@ const items = [
   { label: 'Sobre', icon: Info },
 ]
 
-export function BottomNav() {
-  const [active, setActive] = useState('Campeonato')
+export function BottomNav({ activeItem = 'Campeonato' }: { activeItem?: string }) {
+  const [active, setActive] = useState(activeItem)
 
   return (
     <nav
