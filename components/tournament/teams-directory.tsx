@@ -10,13 +10,13 @@ type Team = {
   name: string
   logo: string
   players: number
+  standing?: string
 }
 
 const teams: Team[] = [
-  { id: 'a', name: 'Time A', logo: '/time-a.png', players: 14 },
-  { id: 'b', name: 'Time B', logo: '/time-b.png', players: 13 },
-  { id: 'c', name: 'Time C', logo: '/time-c.png', players: 15 },
-  { id: 'd', name: 'Time D', logo: '/time-d.png', players: 12 },
+  { id: 'a', name: 'Time A', logo: '/time-a.png', players: 12, standing: '1º Colocado' },
+  { id: 'b', name: 'Time B', logo: '/time-b.png', players: 10 },
+  { id: 'c', name: 'Time C', logo: '/time-c.png', players: 11 },
 ]
 
 type Squad = {
@@ -25,19 +25,30 @@ type Squad = {
   avatar: string
   position: string
   tag?: string
+  yellowCards?: number
 }
 
 const timeASquad: Squad[] = [
   { number: 10, name: 'Joãozinho', avatar: '/joaozinho.png', position: 'Atacante', tag: '8 Gols' },
-  { number: 1, name: 'Marcos', avatar: '/marcos.png', position: 'Goleiro', tag: 'Menos Vazado' },
-  { number: 7, name: 'Pedrinho', avatar: '/pedrinho.png', position: 'Meio-campo' },
+  { number: 1, name: 'Marcos', avatar: '/marcos.png', position: 'Goleiro', tag: '2 Gols sofridos' },
+  { number: 7, name: 'Lucas', avatar: '/lucas.png', position: 'Meio-campo', tag: '6 Assistências' },
+  { number: 5, name: 'Pedrinho', avatar: '/pedrinho.png', position: 'Zagueiro', yellowCards: 1 },
 ]
 
 export function TeamsDirectory() {
   const [query, setQuery] = useState('')
   const [expanded, setExpanded] = useState(true)
 
-  const filtered = teams.filter((t) => t.name.toLowerCase().includes(query.toLowerCase().trim()))
+  const normalized = query.toLowerCase().trim()
+  const filtered = teams.filter((t) => {
+    if (!normalized) return true
+    if (t.name.toLowerCase().includes(normalized)) return true
+    // Busca também por jogador do elenco (Time A)
+    if (t.id === 'a') {
+      return timeASquad.some((p) => p.name.toLowerCase().includes(normalized))
+    }
+    return false
+  })
 
   return (
     <section className="px-5 pt-5" aria-label="Equipes participantes">
@@ -51,37 +62,49 @@ export function TeamsDirectory() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar time..."
-          aria-label="Buscar time"
+          placeholder="Buscar time ou jogador..."
+          aria-label="Buscar time ou jogador"
           className="w-full bg-transparent text-sm font-medium text-foreground outline-none placeholder:text-muted-foreground"
         />
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3">
+      <ul className="mt-4 flex flex-col gap-3">
         {filtered.map((team) => (
-          <div
+          <li
             key={team.id}
-            className="flex items-center gap-3 rounded-3xl bg-card p-3.5 shadow-sm ring-1 ring-border"
+            className="flex items-center gap-3.5 rounded-3xl bg-card p-3.5 shadow-sm ring-1 ring-border"
           >
-            <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-secondary ring-1 ring-border">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-secondary ring-1 ring-border">
               <Image
                 src={team.logo}
                 alt={`Escudo do ${team.name}`}
-                width={40}
-                height={40}
-                className="h-10 w-10 object-contain"
+                width={44}
+                height={44}
+                className="h-11 w-11 object-contain"
               />
             </span>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-foreground">{team.name}</p>
-              <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <p className="truncate text-sm font-bold text-foreground">{team.name}</p>
+                {team.standing ? (
+                  <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
+                    {team.standing}
+                  </span>
+                ) : null}
+              </div>
+              <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                 <Users className="h-3 w-3" />
-                {team.players} atletas
+                {team.players} Jogadores Cadastrados
               </p>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+        {filtered.length === 0 ? (
+          <li className="rounded-3xl bg-card p-5 text-center text-sm text-muted-foreground ring-1 ring-border">
+            Nenhum resultado para “{query}”.
+          </li>
+        ) : null}
+      </ul>
 
       <div className="mt-5 overflow-hidden rounded-3xl bg-card shadow-sm ring-1 ring-border">
         <button
@@ -100,7 +123,7 @@ export function TeamsDirectory() {
             />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-foreground">Time A · Elenco Inscrito</p>
+            <p className="text-sm font-bold text-foreground">Elenco · Time A</p>
             <p className="text-xs text-muted-foreground">Técnico: Zé Carlos</p>
           </div>
           <ChevronDown
@@ -133,8 +156,18 @@ export function TeamsDirectory() {
                   <p className="text-xs text-muted-foreground">{player.position}</p>
                 </div>
                 {player.tag ? (
-                  <span className="rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-foreground">
+                  <span className="shrink-0 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-foreground">
                     {player.tag}
+                  </span>
+                ) : null}
+                {player.yellowCards ? (
+                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-foreground">
+                    <span
+                      aria-hidden="true"
+                      className="h-3.5 w-2.5 rounded-[2px] bg-amber-400"
+                    />
+                    {player.yellowCards}
+                    <span className="sr-only">cartão amarelo</span>
                   </span>
                 ) : null}
               </li>
