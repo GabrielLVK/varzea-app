@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Copa Várzea 2026",
+    "slug": "varzea-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/crest-copa.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F6FBF8",
+    "splash": {
+      "image": "./assets/crest-copa.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1F9D6B"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/crest-copa.png",
+        "backgroundColor": "#1F9D6B"
+      }
+    },
+    "web": {
+      "favicon": "./assets/crest-copa.png"
+    },
+    "plugins": ["expo-secure-store", "expo-font"]
+  }
+}

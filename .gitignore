@@ -1,15 +1,49 @@
-# v0 sandbox internal files
-__v0_runtime_loader.js
-__v0_devtools.tsx
-__v0_jsx-dev-runtime.ts
-.snowflake/
-.v0-trash/
-.vercel/
+# dependências
+node_modules/
 
-# Environment variables
-.env*.local
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.metro-health-check*
 
-# Common ignores
-node_modules
-.next/
+# pastas nativas geradas por `expo prebuild` — não versionar no fluxo Expo Go
+/ios
+/android
+
+# credenciais e chaves de assinatura — NUNCA versionar
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+google-services.json
+GoogleService-Info.plist
+credentials.json
+
+# variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# logs e temporários
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.orig.*
+*.tsbuildinfo
+.kotlin/
+
+# editores
+.vscode/
+.idea/
+*.swp
+
+# sistema operacional
 .DS_Store
+Thumbs.db
+desktop.ini
