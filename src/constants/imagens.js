@@ -1,7 +1,10 @@
 /**
- * No React Native o `require` precisa ser estático — não dá para montar o
- * caminho em tempo de execução. Por isso os dados guardam só uma chave e
+ * No React Native o `require` precisa ser estatico — nao da para montar o
+ * caminho em tempo de execucao. Por isso os dados guardam so uma chave e
  * quem desenha resolve a imagem por aqui.
+ *
+ * Desde que o app passou a usar camera e galeria, o mesmo campo pode conter
+ * uma URI (`file://...`) em vez de uma chave. `fonteImagem` trata os dois.
  */
 
 export const imagens = {
@@ -10,14 +13,24 @@ export const imagens = {
   generica: require('../../assets/placeholder.jpg'),
 };
 
-/**
- * Escudos que o organizador pode escolher ao cadastrar uma equipe.
- * Vazio: os escudos originais pesavam ~2 MB e foram removidos; os times
- * aparecem com as iniciais. Para voltar a ter escudos, coloque os arquivos
- * em `assets/`, adicione o `require` acima e liste as chaves aqui.
- */
-export const ESCUDOS_DISPONIVEIS = [];
+export function ehUri(valor) {
+  return (
+    typeof valor === 'string' &&
+    /^(file:|content:|https?:|ph:|assets-library:|data:)/.test(valor)
+  );
+}
 
-export function imagem(chave, padrao = 'generica') {
-  return imagens[chave] ?? imagens[padrao];
+/**
+ * Devolve algo que o `source` de <Image> entende:
+ * um modulo do require, ou { uri } para foto tirada no aparelho.
+ * Null quando nao ha imagem — quem chama decide o que desenhar no lugar.
+ */
+export function fonteImagem(valor, padrao = null) {
+  if (ehUri(valor)) {
+    return { uri: valor };
+  }
+  if (valor && imagens[valor]) {
+    return imagens[valor];
+  }
+  return padrao ? imagens[padrao] : null;
 }

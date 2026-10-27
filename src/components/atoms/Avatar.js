@@ -1,17 +1,22 @@
+import { useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 
-import { imagem } from '../../constants/imagens';
+import { fonteImagem } from '../../constants/imagens';
 import { cores, raios } from '../../theme';
 
-const TAMANHOS = { p: 28, md: 40, g: 48 };
+const TAMANHOS = { p: 28, md: 40, g: 48, gg: 96 };
 
 export function Avatar({ foto, nome, tamanho = 'md', style }) {
+  /* foto tirada no aparelho pode sumir com a limpeza de cache */
+  const [falhou, setFalhou] = useState(false);
+
   const lado = TAMANHOS[tamanho] ?? TAMANHOS.md;
 
   return (
     <Image
-      source={imagem(foto, 'jogador')}
+      source={fonteImagem(falhou ? null : foto, 'jogador')}
       accessibilityLabel={nome ? `Foto de ${nome}` : 'Foto do jogador'}
+      onError={() => setFalhou(true)}
       resizeMode="cover"
       style={[styles.foto, { width: lado, height: lado }, style]}
     />

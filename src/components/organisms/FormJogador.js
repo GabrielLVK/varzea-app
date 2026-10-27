@@ -14,12 +14,14 @@ import { Button } from '../atoms/Button';
 import { ErrorMessage } from '../molecules/ErrorMessage';
 import { FormField } from '../molecules/FormField';
 import { SelectField } from '../molecules/SelectField';
+import { SeletorImagem } from '../molecules/SeletorImagem';
 
 export function FormJogador({ times, onSubmit, carregando = false, erro = null }) {
   const [timeId, setTimeId] = useState('');
   const [nome, setNome] = useState('');
   const [numero, setNumero] = useState('');
   const [posicao, setPosicao] = useState('');
+  const [foto, setFoto] = useState(null);
   const [tocados, setTocados] = useState({});
   const numeroRef = useRef(null);
 
@@ -38,8 +40,9 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
     setTocados({ timeId: true, nome: true, numero: true, posicao: true });
     if (primeiroErro(erros) || carregando) return;
 
-    onSubmit({ timeId, nome: nome.trim(), numero, posicao });
+    onSubmit({ timeId, nome: nome.trim(), numero, posicao, foto });
     setNome('');
+    setFoto(null);
     setNumero('');
     setPosicao('');
     setTocados({});
@@ -48,6 +51,15 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
   return (
     <View style={styles.form}>
       <ErrorMessage mensagem={erro} />
+
+      <SeletorImagem
+        rotulo="Foto do Jogador"
+        valor={foto}
+        nome={nome}
+        aoEscolher={setFoto}
+        formato="redondo"
+        desabilitado={carregando}
+      />
 
       <SelectField
         label="Equipe"

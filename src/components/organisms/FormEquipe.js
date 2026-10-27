@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { ESCUDOS_DISPONIVEIS } from '../../constants/imagens';
 import { cores, espacamentos, raios } from '../../theme';
 import { erroVisivel, primeiroErro, validarNome } from '../../utils/validacao';
 import { Button } from '../atoms/Button';
-import { Escudo } from '../atoms/Escudo';
 import { IconButton } from '../atoms/IconButton';
 import { Label } from '../atoms/Label';
 import { ErrorMessage } from '../molecules/ErrorMessage';
 import { FormField } from '../molecules/FormField';
+import { SeletorImagem } from '../molecules/SeletorImagem';
 
 export function FormEquipe({
   equipe,
@@ -63,39 +62,13 @@ export function FormEquipe({
 
       <ErrorMessage mensagem={erro} />
 
-      {ESCUDOS_DISPONIVEIS.length > 0 ? (
-        <View style={styles.escudos}>
-          <Label variante="rotulo">Escudo do Time</Label>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.escudosFaixa}>
-            {ESCUDOS_DISPONIVEIS.map(chave => {
-              const ativo = escudo === chave;
-              return (
-                <Pressable
-                  key={chave}
-                  onPress={() => setEscudo(chave)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Usar escudo ${chave}`}
-                  accessibilityState={{ selected: ativo }}
-                  style={[styles.opcaoEscudo, ativo && styles.opcaoAtiva]}>
-                  <Escudo escudo={chave} tamanho="md" />
-                </Pressable>
-              );
-            })}
-
-            <Pressable
-              onPress={() => setEscudo(null)}
-              accessibilityRole="button"
-              accessibilityLabel="Sem escudo"
-              accessibilityState={{ selected: escudo === null }}
-              style={[styles.opcaoEscudo, escudo === null && styles.opcaoAtiva]}>
-              <Escudo escudo={null} nome={nome || '--'} tamanho="md" />
-            </Pressable>
-          </ScrollView>
-        </View>
-      ) : null}
+      <SeletorImagem
+        rotulo="Escudo do Time"
+        valor={escudo}
+        nome={nome}
+        aoEscolher={setEscudo}
+        desabilitado={carregando}
+      />
 
       <FormField
         label="Nome do Time"
@@ -145,13 +118,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  escudos: { gap: espacamentos.sm },
-  escudosFaixa: { gap: espacamentos.sm, paddingVertical: espacamentos.xxs },
-  opcaoEscudo: {
-    padding: espacamentos.xs,
-    borderRadius: raios.lg,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  opcaoAtiva: { borderColor: cores.primaria },
 });
