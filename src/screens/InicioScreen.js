@@ -11,11 +11,13 @@ import { EstadoCarga } from '../components/molecules/EstadoCarga';
 import { TorcedorTemplate } from '../components/templates/TorcedorTemplate';
 import { listarDestaques } from '../services/estatistica';
 import { proximaPartida } from '../services/partida';
+import { obterPreferencias } from '../services/preferencias';
 import { espacamentos } from '../theme';
 
 export function InicioScreen({ navigation }) {
   const [partida, setPartida] = useState(null);
   const [destaques, setDestaques] = useState(null);
+  const [finalizado, setFinalizado] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [erro, setErro] = useState(null);
@@ -24,12 +26,14 @@ export function InicioScreen({ navigation }) {
     if (!silencioso) setCarregando(true);
     setErro(null);
     try {
-      const [proxima, resumo] = await Promise.all([
+      const [proxima, resumo, prefs] = await Promise.all([
         proximaPartida(),
         listarDestaques(),
+        obterPreferencias(),
       ]);
       setPartida(proxima);
       setDestaques(resumo);
+      setFinalizado(prefs.campeonatoFinalizado);
     } catch (e) {
       setErro(e.message);
     } finally {
@@ -70,7 +74,13 @@ export function InicioScreen({ navigation }) {
 
   const cabecalho = (
     <CabecalhoCampeonato
-      status={partida ? `Fase de Grupos · ${partida.rodada}` : 'Fase de Grupos'}
+      status={
+        finalizado
+          ? 'Campeonato finalizado'
+          : partida
+            ? `Fase de Grupos · ${partida.rodada}`
+            : 'Fase de Grupos'
+      }
       onAbrirAdmin={() => navigation.navigate('AdminLogin')}
       onNotificacoes={() =>
         Alert.alert(

@@ -11,6 +11,7 @@ import { SectionCard } from '../components/molecules/SectionCard';
 import { SuccessMessage } from '../components/molecules/SuccessMessage';
 import { FormPartida } from '../components/organisms/FormPartida';
 import { ScreenTemplate } from '../components/templates/ScreenTemplate';
+import { avisarPartidaAgendada } from '../services/avisos';
 import { criarPartida, listarPartidas, removerPartida } from '../services/partida';
 import { listarTimes } from '../services/time';
 import { cores, espacamentos } from '../theme';
@@ -56,6 +57,7 @@ export function AdminJogosScreen() {
       const mandante = times.find(time => time.id === dados.mandanteId)?.nome;
       const visitante = times.find(time => time.id === dados.visitanteId)?.nome;
       setSucesso(`Partida ${mandante} x ${visitante} agendada!`);
+      await avisarPartidaAgendada(`${mandante} x ${visitante}`, dados.data, dados.hora);
       await carregar();
     } catch (e) {
       setErroForm(e.message);

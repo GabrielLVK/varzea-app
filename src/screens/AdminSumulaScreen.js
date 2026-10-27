@@ -9,6 +9,7 @@ import { SectionCard } from '../components/molecules/SectionCard';
 import { SuccessMessage } from '../components/molecules/SuccessMessage';
 import { FormSumula } from '../components/organisms/FormSumula';
 import { ScreenTemplate } from '../components/templates/ScreenTemplate';
+import { avisarSumulaPublicada } from '../services/avisos';
 import { listarElenco } from '../services/jogador';
 import { listarPartidas, publicarSumula } from '../services/partida';
 import { espacamentos } from '../theme';
@@ -67,9 +68,11 @@ export function AdminSumulaScreen() {
       const partida = partidas.find(item => item.id === partidaId);
       await publicarSumula(partidaId, { placarMandante, placarVisitante, eventos });
 
-      setSucesso(
-        `Súmula publicada: ${partida?.mandante?.nome} ${placarMandante} x ${placarVisitante} ${partida?.visitante?.nome}.`,
-      );
+      const resumo = `${partida?.mandante?.nome} ${placarMandante} x ${placarVisitante} ${partida?.visitante?.nome}`;
+      setSucesso(`Súmula publicada: ${resumo}.`);
+
+      // o aviso respeita a preferencia; falha nele nao derruba a publicacao
+      await avisarSumulaPublicada(resumo);
       setElencos({});
       await carregar();
     } catch (e) {

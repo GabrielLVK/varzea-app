@@ -8,9 +8,11 @@ import { Alert, StyleSheet, View } from 'react-native';
 
 import { Icone } from '../components/atoms/Icone';
 import { Label } from '../components/atoms/Label';
+import { AdminConfigScreen } from '../screens/AdminConfigScreen';
 import { AdminEquipesScreen } from '../screens/AdminEquipesScreen';
 import { AdminJogadoresScreen } from '../screens/AdminJogadoresScreen';
 import { AdminJogosScreen } from '../screens/AdminJogosScreen';
+import { AdminRecursosScreen } from '../screens/AdminRecursosScreen';
 import { AdminSumulaScreen } from '../screens/AdminSumulaScreen';
 import { logout } from '../services/auth';
 import { cores, espacamentos } from '../theme';
@@ -104,6 +106,24 @@ export function AdminDrawer() {
           title: 'Súmula',
           drawerLabel: 'Súmula',
           drawerIcon: icone('ClipboardList'),
+        }}
+      />
+      <Drawer.Screen
+        name="AdminRecursos"
+        component={AdminRecursosScreen}
+        options={{
+          title: 'Recursos nativos',
+          drawerLabel: 'Câmera e GPS',
+          drawerIcon: icone('Camera'),
+        }}
+      />
+      <Drawer.Screen
+        name="AdminConfig"
+        component={AdminConfigScreen}
+        options={{
+          title: 'Configurações',
+          drawerLabel: 'Configurações',
+          drawerIcon: icone('Settings'),
         }}
       />
     </Drawer.Navigator>
