@@ -54,3 +54,9 @@ export function ordinal(posicao) {
 export function novoId() {
   return Math.random().toString(36).slice(2, 9);
 }
+
+/** { latitude, longitude } -> "-27.09876, -52.61543" */
+export function formatarCoordenadas(coords) {
+  if (!coords) return '';
+  return `${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)}`;
+}

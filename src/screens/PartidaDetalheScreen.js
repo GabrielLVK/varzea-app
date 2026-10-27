@@ -14,7 +14,7 @@ import { ScreenTemplate } from '../components/templates/ScreenTemplate';
 import { listarElenco } from '../services/jogador';
 import { buscarPartida } from '../services/partida';
 import { cores, espacamentos, raios } from '../theme';
-import { formatarData, formatarDiaHora } from '../utils/formato';
+import { formatarCoordenadas, formatarData, formatarDiaHora } from '../utils/formato';
 
 function Elenco({ titulo, jogadores }) {
   return (
@@ -117,6 +117,15 @@ export function PartidaDetalheScreen({ route }) {
           />
           <InfoChip icone="MapPin" texto={partida.local} />
         </View>
+
+        {partida.coordenadas ? (
+          <View style={styles.coordenadas}>
+            <InfoChip
+              icone="LocateFixed"
+              texto={`Campo em ${formatarCoordenadas(partida.coordenadas)}`}
+            />
+          </View>
+        ) : null}
       </View>
 
       <View style={styles.elencos}>
@@ -151,6 +160,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: espacamentos.sm + espacamentos.xs,
     marginTop: espacamentos.tela,
+  },
+  coordenadas: {
+    flexDirection: 'row',
+    marginTop: espacamentos.sm + espacamentos.xs,
   },
   elencos: { marginTop: espacamentos.md, gap: espacamentos.md },
   bloco: { gap: espacamentos.sm },

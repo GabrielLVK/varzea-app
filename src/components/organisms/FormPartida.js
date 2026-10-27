@@ -14,6 +14,7 @@ import {
 import { Button } from '../atoms/Button';
 import { ErrorMessage } from '../molecules/ErrorMessage';
 import { FormField } from '../molecules/FormField';
+import { MarcadorLocal } from '../molecules/MarcadorLocal';
 import { SelectField } from '../molecules/SelectField';
 
 export function FormPartida({ times, onSubmit, carregando = false, erro = null }) {
@@ -23,6 +24,7 @@ export function FormPartida({ times, onSubmit, carregando = false, erro = null }
   const [hora, setHora] = useState('');
   const [local, setLocal] = useState('');
   const [rodada, setRodada] = useState('');
+  const [coordenadas, setCoordenadas] = useState(null);
   const [tocados, setTocados] = useState({});
 
   const horaRef = useRef(null);
@@ -55,13 +57,22 @@ export function FormPartida({ times, onSubmit, carregando = false, erro = null }
     });
     if (primeiroErro(erros) || carregando) return;
 
-    onSubmit({ mandanteId, visitanteId, data, hora, local: local.trim(), rodada: rodada.trim() });
+    onSubmit({
+      mandanteId,
+      visitanteId,
+      data,
+      hora,
+      local: local.trim(),
+      rodada: rodada.trim(),
+      coordenadas,
+    });
     setMandanteId('');
     setVisitanteId('');
     setData('');
     setHora('');
     setLocal('');
     setRodada('');
+    setCoordenadas(null);
     setTocados({});
   }
 
@@ -139,6 +150,13 @@ export function FormPartida({ times, onSubmit, carregando = false, erro = null }
         returnKeyType="next"
         blurOnSubmit={false}
         onSubmitEditing={() => rodadaRef.current?.focus()}
+      />
+
+      <MarcadorLocal
+        rotulo="Onde fica o campo (opcional)"
+        coordenadas={coordenadas}
+        aoMarcar={setCoordenadas}
+        desabilitado={carregando}
       />
 
       <FormField

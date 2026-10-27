@@ -67,6 +67,7 @@ export async function criarPartida({
   hora,
   local,
   rodada,
+  coordenadas = null,
 }) {
   await aguardar();
   const partidas = await obterColecao(CHAVES.partidas, PARTIDAS_SEED);
@@ -77,6 +78,7 @@ export async function criarPartida({
     data,
     hora,
     local: local.trim(),
+    coordenadas,
     mandanteId,
     visitanteId,
     placarMandante: null,
