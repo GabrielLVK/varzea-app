@@ -13,17 +13,55 @@
       "backgroundColor": "#1F9D6B"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.varzeaapp",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "O VárzeaApp usa a câmera para fotografar o escudo do time e os jogadores.",
+        "NSPhotoLibraryUsageDescription": "O VárzeaApp usa a galeria para escolher o escudo do time e a foto dos jogadores.",
+        "NSLocationWhenInUseUsageDescription": "O VárzeaApp usa sua localização para marcar onde fica o campo da partida.",
+        "NSMicrophoneUsageDescription": "O VárzeaApp não grava áudio; o sistema pode pedir isso junto com a câmera."
+      }
     },
     "android": {
+      "package": "com.varzeaapp",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/crest-copa.png",
         "backgroundColor": "#1F9D6B"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/crest-copa.png"
     },
-    "plugins": ["expo-secure-store", "expo-font"]
+    "plugins": [
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true
+        }
+      ],
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "O VárzeaApp usa a câmera para fotografar o escudo do time e os jogadores.",
+          "photosPermission": "O VárzeaApp usa a galeria para escolher o escudo do time e a foto dos jogadores."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "O VárzeaApp usa sua localização para marcar onde fica o campo da partida."
+        }
+      ],
+      "expo-notifications"
+    ]
   }
 }
