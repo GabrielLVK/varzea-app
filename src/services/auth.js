@@ -1,6 +1,7 @@
 import { ApiError } from './api';
 import { aguardar, USAR_DADOS_LOCAIS } from './config';
 import { ORGANIZADOR_SEED } from './mock/dados';
+import { limparPerfilLocal } from './perfilLocal';
 import {
   obterToken,
   obterUsuario,
@@ -46,6 +47,10 @@ export async function obterSessao() {
   return obterUsuario();
 }
 
+/**
+ * Tira da gaveta tudo que e da sessao: token, usuario, foto e ultimo campo.
+ * As preferencias ficam — sao do aparelho, nao da conta.
+ */
 export async function logout() {
-  await removerToken();
+  await Promise.all([removerToken(), limparPerfilLocal()]);
 }
