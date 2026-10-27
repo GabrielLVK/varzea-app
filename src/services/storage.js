@@ -1,12 +1,13 @@
 /**
- * SERVICE — storage
+ * Duas gavetas de proposito diferente:
  *
- * Duas camadas, por motivos diferentes:
+ *   1. Segredo (o token) -> expo-secure-store, que usa o Keychain no iOS e o
+ *      EncryptedSharedPreferences no Android.
+ *   2. Dado local nao secreto (usuario, preferencias, foto, colecoes) ->
+ *      AsyncStorage, que e um arquivo de chave/valor comum.
  *
- * - sessão (token e usuário) em `expo-secure-store`, criptografado — é o que
- *   a referência MeuAppExpo faz;
- * - coleções do campeonato em `AsyncStorage`, porque o SecureStore tem limite
- *   de ~2 KB por chave e a lista de jogadores passa disso.
+ * Senha nunca e gravada. So este arquivo sabe qual gaveta e qual: quem chama
+ * pede salvarLocal/obterLocal e nao conhece SecureStore.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
@@ -15,26 +16,31 @@ import * as SecureStore from 'expo-secure-store';
 const CHAVE_TOKEN = 'varzea_token';
 const CHAVE_USUARIO = 'varzea_usuario';
 
+/** o cofre so abre com o aparelho desbloqueado, e o segredo nao vai para backup */
+const opcoesSeguras = {
+  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+};
+
 const noWeb = Platform.OS === 'web';
 
-// --- sessão (SecureStore) --------------------------------------------------
+// --- gaveta 1: segredo -----------------------------------------------------
 
-async function setItemSeguro(chave, valor) {
+async function setSecreto(chave, valor) {
   if (noWeb) {
     localStorage.setItem(chave, valor);
     return;
   }
-  await SecureStore.setItemAsync(chave, valor);
+  await SecureStore.setItemAsync(chave, valor, opcoesSeguras);
 }
 
-async function getItemSeguro(chave) {
+async function getSecreto(chave) {
   if (noWeb) {
     return localStorage.getItem(chave);
   }
   return SecureStore.getItemAsync(chave);
 }
 
-async function removeItemSeguro(chave) {
+async function removeSecreto(chave) {
   if (noWeb) {
     localStorage.removeItem(chave);
     return;
@@ -43,24 +49,28 @@ async function removeItemSeguro(chave) {
 }
 
 export async function salvarToken(token) {
-  await setItemSeguro(CHAVE_TOKEN, token);
+  await setSecreto(CHAVE_TOKEN, token);
 }
 
 export async function obterToken() {
-  return getItemSeguro(CHAVE_TOKEN);
+  return getSecreto(CHAVE_TOKEN);
 }
 
 export async function removerToken() {
-  await removeItemSeguro(CHAVE_TOKEN);
-  await removeItemSeguro(CHAVE_USUARIO);
+  await removeSecreto(CHAVE_TOKEN);
+  await AsyncStorage.removeItem(CHAVE_USUARIO);
+  // versoes antigas gravavam o usuario no cofre; limpa o resto esquecido la
+  await removeSecreto(CHAVE_USUARIO).catch(() => {});
 }
 
+// --- gaveta 2: dado local --------------------------------------------------
+
 export async function salvarUsuario(usuario) {
-  await setItemSeguro(CHAVE_USUARIO, JSON.stringify(usuario));
+  await AsyncStorage.setItem(CHAVE_USUARIO, JSON.stringify(usuario));
 }
 
 export async function obterUsuario() {
-  const bruto = await getItemSeguro(CHAVE_USUARIO);
+  const bruto = await AsyncStorage.getItem(CHAVE_USUARIO);
   if (!bruto) return null;
   try {
     return JSON.parse(bruto);
@@ -69,10 +79,29 @@ export async function obterUsuario() {
   }
 }
 
-// --- coleções do campeonato (AsyncStorage) ---------------------------------
+export async function salvarLocal(chave, valor) {
+  await AsyncStorage.setItem(chave, JSON.stringify(valor));
+  return valor;
+}
+
+export async function obterLocal(chave) {
+  const bruto = await AsyncStorage.getItem(chave);
+  if (!bruto) return null;
+  try {
+    return JSON.parse(bruto);
+  } catch {
+    return null;
+  }
+}
+
+export async function removerLocal(chave) {
+  await AsyncStorage.removeItem(chave);
+}
+
+// --- colecoes do campeonato ------------------------------------------------
 
 /**
- * Lê a coleção. Na primeira vez grava o seed recebido, para que o app já
+ * Le a colecao. Na primeira vez grava o seed recebido, para que o app ja
  * abra com o campeonato montado.
  */
 export async function obterColecao(chave, seed = []) {
@@ -93,7 +122,6 @@ export async function salvarColecao(chave, valor) {
   return valor;
 }
 
-/** usado pela tela de configurações do painel para voltar aos dados de exemplo */
 export async function limparColecoes(chaves) {
   await AsyncStorage.multiRemove(chaves);
 }

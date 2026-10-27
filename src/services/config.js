@@ -8,6 +8,9 @@
  * Quando existir backend, basta virar a flag para false e implementar as
  * funções em cima de `apiRequest` — nenhuma tela precisa mudar.
  *
+ * HTTP so vale em desenvolvimento (localhost / emulador).
+ * Em producao use HTTPS: sem TLS o token viaja em texto puro na rede.
+ *
  * Android emulator -> 10.0.2.2 | iOS simulator -> localhost
  * Em dispositivo físico, use o IP da máquina na LAN.
  */

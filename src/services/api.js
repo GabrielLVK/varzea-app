@@ -1,3 +1,9 @@
+/**
+ * Cliente HTTP unico do app. Nenhuma tela chama fetch direto.
+ *
+ * Nunca logue headers.Authorization: o token e credencial, vale tanto
+ * quanto a senha enquanto nao expirar.
+ */
 import { API_PREFIX } from './config';
 import { obterToken, removerToken } from './storage';
 
