@@ -9,6 +9,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
+import { isRunningInExpoGo } from 'expo';
 import { Platform } from 'react-native';
 
 const CANAL_ANDROID = 'varzea';
@@ -120,7 +121,7 @@ export async function pedirPermissaoNotificacao() {
   recusarSeWeb();
   configurarNotificacoes();
 
-  if (Platform.OS === 'android') {
+  if (Platform.OS === 'android' && !isRunningInExpoGo()) {
     await Notifications.setNotificationChannelAsync(CANAL_ANDROID, {
       name: 'Copa Várzea',
       importance: Notifications.AndroidImportance.DEFAULT,
@@ -144,7 +145,13 @@ export async function enviarAvisoLocal({ titulo, corpo, segundos = 2 }) {
   }
   await Notifications.scheduleNotificationAsync({
     content: { title: titulo, body: corpo },
-    trigger: { type: 'timeInterval', seconds: segundos, channelId: CANAL_ANDROID },
+    trigger: {
+      type: 'timeInterval',
+      seconds: segundos,
+      ...(Platform.OS === 'android' && !isRunningInExpoGo()
+        ? { channelId: CANAL_ANDROID }
+        : {}),
+    },
   });
 }
 
