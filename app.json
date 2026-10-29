@@ -7,11 +7,6 @@
     "icon": "./assets/crest-copa.png",
     "userInterfaceStyle": "light",
     "backgroundColor": "#F6FBF8",
-    "splash": {
-      "image": "./assets/crest-copa.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1F9D6B"
-    },
     "ios": {
       "bundleIdentifier": "com.varzeaapp",
       "buildNumber": "1",
@@ -42,6 +37,14 @@
     },
     "plugins": [
       [
+        "expo-splash-screen",
+        {
+          "image": "./assets/crest-copa.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#1F9D6B"
+        }
+      ],
+      [
         "expo-secure-store",
         {
           "configureAndroidBackup": true
@@ -61,7 +64,8 @@
           "locationWhenInUsePermission": "O VárzeaApp usa sua localização para marcar onde fica o campo da partida."
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      "expo-status-bar"
     ]
   }
 }
