@@ -41,11 +41,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: espacamentos.lg,
+    backgroundColor: cores.fundo,
   },
   caixa: {
     flex: 1,
     justifyContent: 'center',
     padding: espacamentos.lg,
+    backgroundColor: cores.fundo,
   },
   texto: { marginTop: espacamentos.md },
   botao: { marginTop: espacamentos.md },

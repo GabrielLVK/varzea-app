@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: cores.destaque,
     borderRadius: raios.xl,
     borderWidth: 1,
-    borderColor: 'rgba(31, 157, 107, 0.18)',
+    borderColor: 'rgba(255, 0, 0, 0.3)',
     paddingHorizontal: espacamentos.md,
     paddingVertical: espacamentos.md,
   },

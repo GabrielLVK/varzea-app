@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { POSICOES } from '../../constants/campeonato';
 import { cores, espacamentos, raios } from '../../theme';
 import {
   erroVisivel,
@@ -20,7 +19,6 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
   const [timeId, setTimeId] = useState('');
   const [nome, setNome] = useState('');
   const [numero, setNumero] = useState('');
-  const [posicao, setPosicao] = useState('');
   const [foto, setFoto] = useState(null);
   const [tocados, setTocados] = useState({});
   const numeroRef = useRef(null);
@@ -29,7 +27,6 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
     timeId: validarSelecao(timeId, { rotulo: 'a equipe' }),
     nome: validarNome(nome, { rotulo: 'nome do jogador' }),
     numero: validarNumeroCamisa(numero),
-    posicao: validarSelecao(posicao, { rotulo: 'a posição' }),
   };
 
   function tocar(campo) {
@@ -37,14 +34,13 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
   }
 
   function enviar() {
-    setTocados({ timeId: true, nome: true, numero: true, posicao: true });
+    setTocados({ timeId: true, nome: true, numero: true });
     if (primeiroErro(erros) || carregando) return;
 
-    onSubmit({ timeId, nome: nome.trim(), numero, posicao, foto });
+    onSubmit({ timeId, nome: nome.trim(), numero, foto });
     setNome('');
     setFoto(null);
     setNumero('');
-    setPosicao('');
     setTocados({});
   }
 
@@ -83,31 +79,17 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
         onSubmitEditing={() => numeroRef.current?.focus()}
       />
 
-      <View style={styles.dupla}>
-        <FormField
-          ref={numeroRef}
-          label="Número"
-          placeholder="10"
-          value={numero}
-          onChangeText={setNumero}
-          onBlur={() => tocar('numero')}
-          mensagemErro={erroVisivel(tocados, erros, 'numero')}
-          keyboardType="number-pad"
-          maxLength={2}
-          style={styles.campo}
-        />
-
-        <SelectField
-          label="Posição"
-          valor={posicao}
-          opcoes={POSICOES.map(item => ({ valor: item, rotulo: item }))}
-          aoSelecionar={setPosicao}
-          onBlur={() => tocar('posicao')}
-          placeholder="Selecione"
-          mensagemErro={erroVisivel(tocados, erros, 'posicao')}
-          style={styles.campo}
-        />
-      </View>
+      <FormField
+        ref={numeroRef}
+        label="Número"
+        placeholder="10"
+        value={numero}
+        onChangeText={setNumero}
+        onBlur={() => tocar('numero')}
+        mensagemErro={erroVisivel(tocados, erros, 'numero')}
+        keyboardType="number-pad"
+        maxLength={2}
+      />
 
       <Button
         title="Cadastrar Jogador"
@@ -129,9 +111,4 @@ const styles = StyleSheet.create({
     borderColor: cores.borda,
     padding: espacamentos.md,
   },
-  dupla: {
-    flexDirection: 'row',
-    gap: espacamentos.sm + espacamentos.xs,
-  },
-  campo: { flex: 1 },
 });

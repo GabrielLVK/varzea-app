@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
 
   fundoModal: {
     flex: 1,
-    backgroundColor: 'rgba(19, 37, 29, 0.45)',
+    backgroundColor: 'rgba(15, 15, 15, 0.8)',
     justifyContent: 'flex-end',
   },
   folha: {

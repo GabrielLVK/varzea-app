@@ -21,9 +21,6 @@ export const SquadRow = memo(function SquadRow({ jogador, destaque }) {
         <Label variante="corpo" numberOfLines={1}>
           {jogador.nome}
         </Label>
-        <Label variante="legenda" numberOfLines={1}>
-          {jogador.posicao}
-        </Label>
       </View>
 
       {destaque ? (

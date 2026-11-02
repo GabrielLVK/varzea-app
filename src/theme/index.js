@@ -1,30 +1,30 @@
 export const cores = {
-  fundo: '#F6FBF8',
-  superficie: '#FFFFFF',
+  fundo: '#0F0F0F',
+  superficie: '#1F1F1F',
 
-  primaria: '#1F9D6B',
-  primariaEscura: '#18815A',
-  sobrePrimaria: '#FBFEFC',
+  primaria: '#FF0000',
+  primariaEscura: '#CC0000',
+  sobrePrimaria: '#FFFFFF',
 
-  secundaria: '#E9F4EF',
-  sobreSecundaria: '#27513E',
+  secundaria: '#272727',
+  sobreSecundaria: '#FFFFFF',
 
-  destaque: '#DCF1E4',
-  sobreDestaque: '#1C5739',
+  destaque: '#272727',
+  sobreDestaque: '#FFFFFF',
 
-  texto: '#13251D',
-  textoSecundario: '#5F7A6E',
+  texto: '#FFFFFF',
+  textoSecundario: '#AAAAAA',
 
-  borda: '#DDE8E3',
-  bordaFoco: '#1F9D6B',
+  borda: '#3A3A3A',
+  bordaFoco: '#FF0000',
 
-  perigo: '#D63B2A',
-  perigoFundo: '#FBE9E7',
-  sucesso: '#1E8E5A',
+  perigo: '#CC0000',
+  perigoFundo: '#3A1717',
+  sucesso: '#2EBD59',
 
   cartaoAmarelo: '#FBBF24',
-  cartaoAmareloFundo: '#FDF0CC',
-  cartaoVermelho: '#D63B2A',
+  cartaoAmareloFundo: '#332A12',
+  cartaoVermelho: '#FF0000',
 };
 
 /** fundo e texto das medalhas de 1º, 2º e 3º lugar nos rankings */

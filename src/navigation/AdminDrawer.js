@@ -43,7 +43,10 @@ function ConteudoMenu(props) {
   }
 
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView
+      {...props}
+      style={styles.menu}
+      contentContainerStyle={styles.menuConteudo}>
       <View style={styles.cabecalho}>
         <Label variante="titulo" cor={cores.primaria}>
           Painel do Organizador
@@ -71,6 +74,9 @@ export function AdminDrawer() {
         ...opcoesCabecalho,
         drawerActiveTintColor: cores.primaria,
         drawerInactiveTintColor: cores.textoSecundario,
+        drawerStyle: styles.drawer,
+        overlayColor: 'rgba(0, 0, 0, 0.72)',
+        sceneStyle: styles.cena,
       }}>
       <Drawer.Screen
         name="AdminEquipes"
@@ -131,6 +137,18 @@ export function AdminDrawer() {
 }
 
 const styles = StyleSheet.create({
+  drawer: {
+    backgroundColor: cores.fundo,
+  },
+  cena: {
+    backgroundColor: cores.fundo,
+  },
+  menu: {
+    backgroundColor: cores.fundo,
+  },
+  menuConteudo: {
+    backgroundColor: cores.fundo,
+  },
   cabecalho: {
     paddingHorizontal: espacamentos.md,
     paddingVertical: espacamentos.md,

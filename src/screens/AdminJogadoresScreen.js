@@ -144,7 +144,6 @@ export function AdminJogadoresScreen() {
                         <Label variante="corpo" numberOfLines={1}>
                           {jogador.nome}
                         </Label>
-                        <Label variante="legenda">{jogador.posicao}</Label>
                       </View>
                     </View>
                   </AdminListItem>

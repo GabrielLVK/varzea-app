@@ -25,7 +25,7 @@ export async function listarElenco(timeId) {
     .sort((a, b) => a.numero - b.numero);
 }
 
-export async function criarJogador({ timeId, nome, numero, posicao, foto = null }) {
+export async function criarJogador({ timeId, nome, numero, foto = null }) {
   await aguardar();
   const jogadores = await obterColecao(CHAVES.jogadores, JOGADORES_SEED);
 
@@ -46,7 +46,6 @@ export async function criarJogador({ timeId, nome, numero, posicao, foto = null 
     timeId,
     nome: nome.trim(),
     numero: numeroInt,
-    posicao,
     foto,
     gols: 0,
     assistencias: 0,

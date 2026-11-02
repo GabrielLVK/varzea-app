@@ -64,7 +64,7 @@ export function CabecalhoCampeonato({
           </View>
 
           <View style={styles.textos}>
-            <Label variante="titulo" cor={cores.sobrePrimaria} numberOfLines={1}>
+            <Label variante="titulo" cor={cores.sobrePrimaria}>
               {titulo}
             </Label>
             <Label variante="legenda" cor="rgba(255, 255, 255, 0.72)">
@@ -73,6 +73,9 @@ export function CabecalhoCampeonato({
           </View>
         </View>
 
+      </View>
+
+      <View style={styles.linhaAcoes}>
         <View style={styles.acoes}>
           {acaoDireita}
 
@@ -125,8 +128,7 @@ const styles = StyleSheet.create({
   linhaTopo: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: espacamentos.sm,
+    justifyContent: 'flex-start',
   },
   identidade: {
     flex: 1,
@@ -146,9 +148,13 @@ const styles = StyleSheet.create({
   },
   escudo: { width: 40, height: 40 },
   textos: { flex: 1 },
+  linhaAcoes: {
+    marginTop: espacamentos.md,
+  },
   acoes: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     gap: espacamentos.sm,
   },
   botaoAdmin: {
