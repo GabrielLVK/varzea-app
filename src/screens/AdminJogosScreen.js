@@ -1,7 +1,9 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
+import { STATUS_PARTIDA } from '../constants/campeonato';
+import { Badge } from '../components/atoms/Badge';
 import { Icone } from '../components/atoms/Icone';
 import { Label } from '../components/atoms/Label';
 import { AdminListItem } from '../components/molecules/AdminListItem';
@@ -14,7 +16,7 @@ import { ScreenTemplate } from '../components/templates/ScreenTemplate';
 import { avisarPartidaAgendada } from '../services/avisos';
 import { criarPartida, listarPartidas, removerPartida } from '../services/partida';
 import { listarTimes } from '../services/time';
-import { cores, espacamentos } from '../theme';
+import { cores, espacamentos, raios } from '../theme';
 import { formatarData } from '../utils/formato';
 
 export function AdminJogosScreen() {
@@ -25,6 +27,7 @@ export function AdminJogosScreen() {
   const [erroLista, setErroLista] = useState(null);
   const [erroForm, setErroForm] = useState(null);
   const [sucesso, setSucesso] = useState(null);
+  const [filtro, setFiltro] = useState('todos');
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -65,6 +68,30 @@ export function AdminJogosScreen() {
       setSalvando(false);
     }
   }
+
+  const partidasVisiveis = partidas.filter(partida => {
+    if (filtro === 'agendados') {
+      return partida.status === STATUS_PARTIDA.agendado;
+    }
+    if (filtro === 'finalizados') {
+      return partida.status === STATUS_PARTIDA.finalizado;
+    }
+    return true;
+  });
+
+  const filtros = [
+    { chave: 'todos', rotulo: 'Todos', quantidade: partidas.length },
+    {
+      chave: 'agendados',
+      rotulo: 'Agendados',
+      quantidade: partidas.filter(item => item.status === STATUS_PARTIDA.agendado).length,
+    },
+    {
+      chave: 'finalizados',
+      rotulo: 'Finalizados',
+      quantidade: partidas.filter(item => item.status === STATUS_PARTIDA.finalizado).length,
+    },
+  ];
 
   function handleExcluir(partida) {
     Alert.alert(
@@ -122,30 +149,103 @@ export function AdminJogosScreen() {
         )}
 
         <View style={styles.lista}>
+          {partidas.length > 0 ? (
+            <View style={styles.filtros}>
+              {filtros.map(item => {
+                const ativo = item.chave === filtro;
+                return (
+                  <Pressable
+                    key={item.chave}
+                    onPress={() => setFiltro(item.chave)}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: ativo }}
+                    style={({ pressed }) => [
+                      styles.filtro,
+                      ativo && styles.filtroAtivo,
+                      pressed && styles.pressionado,
+                    ]}>
+                    <Label
+                      variante="legenda"
+                      cor={ativo ? cores.sobrePrimaria : cores.textoSecundario}>
+                      {item.rotulo} ({item.quantidade})
+                    </Label>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : null}
+
           {partidas.length === 0 ? (
             <ListaVazia mensagem="Nenhuma partida agendada ainda." />
+          ) : partidasVisiveis.length === 0 ? (
+            <ListaVazia
+              mensagem={
+                filtro === 'agendados'
+                  ? 'Nenhuma partida agendada no momento.'
+                  : 'Nenhuma partida finalizada ainda.'
+              }
+            />
           ) : (
-            partidas.map(partida => (
+            partidasVisiveis.map(partida => (
               <AdminListItem
                 key={partida.id}
-                aoExcluir={() => handleExcluir(partida)}
-                rotuloExcluir="Excluir partida">
+                aoExcluir={
+                  partida.status === STATUS_PARTIDA.finalizado
+                    ? undefined
+                    : () => handleExcluir(partida)
+                }
+                rotuloExcluir={
+                  partida.status === STATUS_PARTIDA.finalizado
+                    ? undefined
+                    : 'Excluir partida'
+                }>
                 <View style={styles.conteudoItem}>
-                  <Label variante="rotulo">{partida.rodada}</Label>
+                  <View style={styles.cabecalhoItem}>
+                    <Label variante="rotulo">{partida.rodada}</Label>
+                    <Badge
+                      texto={
+                        partida.status === STATUS_PARTIDA.finalizado
+                          ? 'Finalizado'
+                          : 'Agendado'
+                      }
+                      variante={
+                        partida.status === STATUS_PARTIDA.finalizado
+                          ? 'neutro'
+                          : 'destaque'
+                      }
+                    />
+                  </View>
 
-                  <Label variante="corpo">
-                    {partida.mandante?.nome}{' '}
-                    <Label variante="corpo" cor={cores.textoSecundario}>
-                      x
-                    </Label>{' '}
-                    {partida.visitante?.nome}
-                  </Label>
+                  {partida.status === STATUS_PARTIDA.finalizado ? (
+                    <View style={styles.placar}>
+                      <Label variante="corpo">
+                        {partida.mandante?.nome}
+                      </Label>
+                      <Label variante="subtitulo">
+                        {partida.placarMandante} x {partida.placarVisitante}
+                      </Label>
+                      <Label variante="corpo">
+                        {partida.visitante?.nome}
+                      </Label>
+                    </View>
+                  ) : (
+                    <Label variante="corpo">
+                      {partida.mandante?.nome}{' '}
+                      <Label variante="corpo" cor={cores.textoSecundario}>
+                        x
+                      </Label>{' '}
+                      {partida.visitante?.nome}
+                    </Label>
+                  )}
 
                   <View style={styles.infos}>
                     <View style={styles.info}>
                       <Icone nome="Clock" tamanho={14} cor={cores.textoSecundario} />
                       <Label variante="legenda">
-                        {formatarData(partida.data)} · {partida.hora}
+                        {formatarData(partida.data)}
+                        {partida.status === STATUS_PARTIDA.finalizado
+                          ? ''
+                          : ` · ${partida.hora}`}
                       </Label>
                     </View>
                     <View style={styles.info}>
@@ -166,7 +266,35 @@ export function AdminJogosScreen() {
 const styles = StyleSheet.create({
   sucesso: { marginBottom: espacamentos.md },
   lista: { marginTop: espacamentos.tela, gap: espacamentos.sm + espacamentos.xxs },
+  filtros: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espacamentos.xs,
+    backgroundColor: cores.secundaria,
+    borderRadius: raios.pill,
+    padding: espacamentos.xs,
+  },
+  filtro: {
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: raios.pill,
+    paddingVertical: espacamentos.sm,
+  },
+  filtroAtivo: { backgroundColor: cores.primaria },
+  pressionado: { opacity: 0.75 },
   conteudoItem: { gap: espacamentos.xs },
+  cabecalhoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: espacamentos.sm,
+  },
+  placar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: espacamentos.sm,
+  },
   infos: {
     flexDirection: 'row',
     flexWrap: 'wrap',

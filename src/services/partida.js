@@ -93,6 +93,16 @@ export async function criarPartida({
 export async function removerPartida(id) {
   await aguardar();
   const partidas = await obterColecao(CHAVES.partidas, PARTIDAS_SEED);
+  const partida = partidas.find(item => item.id === id);
+
+  if (partida?.status === STATUS_PARTIDA.finalizado) {
+    throw new ApiError(
+      'Não é possível excluir uma partida que já teve a súmula publicada.',
+      409,
+      'local',
+    );
+  }
+
   await salvarColecao(
     CHAVES.partidas,
     partidas.filter(partida => partida.id !== id),
