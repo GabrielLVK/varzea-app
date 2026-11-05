@@ -3,6 +3,11 @@ import { aguardar } from './config';
 import { CHAVES, JOGADORES_SEED, TIMES_SEED } from './mock/dados';
 import { obterColecao, salvarColecao } from './storage';
 
+function normalizarIdade(idade) {
+  const texto = String(idade ?? '').trim();
+  return texto ? Number(texto) : null;
+}
+
 /** acrescenta o nome do time a cada jogador, para as listas não precisarem cruzar */
 async function comTime(jogadores) {
   const times = await obterColecao(CHAVES.times, TIMES_SEED);
@@ -25,7 +30,7 @@ export async function listarElenco(timeId) {
     .sort((a, b) => a.numero - b.numero);
 }
 
-export async function criarJogador({ timeId, nome, numero, foto = null }) {
+export async function criarJogador({ timeId, nome, numero, idade, foto = null }) {
   await aguardar();
   const jogadores = await obterColecao(CHAVES.jogadores, JOGADORES_SEED);
 
@@ -46,6 +51,7 @@ export async function criarJogador({ timeId, nome, numero, foto = null }) {
     timeId,
     nome: nome.trim(),
     numero: numeroInt,
+    idade: normalizarIdade(idade),
     foto,
     gols: 0,
     assistencias: 0,
@@ -58,7 +64,10 @@ export async function criarJogador({ timeId, nome, numero, foto = null }) {
   return novo;
 }
 
-export async function atualizarJogador(id, { timeId, nome, numero, foto = null }) {
+export async function atualizarJogador(
+  id,
+  { timeId, nome, numero, idade, foto = null },
+) {
   await aguardar();
   const jogadores = await obterColecao(CHAVES.jogadores, JOGADORES_SEED);
 
@@ -79,7 +88,14 @@ export async function atualizarJogador(id, { timeId, nome, numero, foto = null }
 
   const atualizados = jogadores.map(jogador =>
     jogador.id === id
-      ? { ...jogador, timeId, nome: nome.trim(), numero: numeroInt, foto }
+      ? {
+          ...jogador,
+          timeId,
+          nome: nome.trim(),
+          numero: numeroInt,
+          idade: normalizarIdade(idade),
+          foto,
+        }
       : jogador,
   );
   const atualizado = atualizados.find(jogador => jogador.id === id);

@@ -18,6 +18,7 @@ import {
 } from '../services/jogador';
 import { listarTimes } from '../services/time';
 import { cores, espacamentos, raios } from '../theme';
+import { formatarIdade } from '../utils/formato';
 
 export function AdminJogadoresScreen() {
   const [times, setTimes] = useState([]);
@@ -174,6 +175,9 @@ export function AdminJogadoresScreen() {
                       <View style={styles.textos}>
                         <Label variante="corpo" numberOfLines={1}>
                           {jogador.nome}
+                        </Label>
+                        <Label variante="legenda" numberOfLines={1}>
+                          {formatarIdade(jogador.idade)}
                         </Label>
                       </View>
                     </View>

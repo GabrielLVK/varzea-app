@@ -5,6 +5,8 @@ export const LIMITES = {
   camisaMin: 1,
   camisaMax: 99,
   placarMax: 99,
+  idadeMin: 1,
+  idadeMax: 120,
 };
 
 /**
@@ -54,6 +56,17 @@ export function validarNumeroCamisa(valor) {
   if (!Number.isInteger(numero)) return 'O número da camisa deve ser inteiro.';
   if (numero < LIMITES.camisaMin || numero > LIMITES.camisaMax) {
     return `O número da camisa deve ser entre ${LIMITES.camisaMin} e ${LIMITES.camisaMax}.`;
+  }
+  return null;
+}
+
+export function validarIdade(valor) {
+  const texto = String(valor ?? '').trim();
+  if (!texto) return null;
+  const numero = Number(texto);
+  if (!Number.isInteger(numero)) return 'A idade deve ser um número inteiro.';
+  if (numero < LIMITES.idadeMin || numero > LIMITES.idadeMax) {
+    return `A idade deve ser entre ${LIMITES.idadeMin} e ${LIMITES.idadeMax} anos.`;
   }
   return null;
 }

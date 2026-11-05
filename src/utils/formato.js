@@ -39,6 +39,10 @@ export function pluralizar(quantidade, singular, plural) {
   return `${n} ${n === 1 ? singular : plural}`;
 }
 
+export function formatarIdade(idade) {
+  return idade == null ? 'Idade não informada' : `${idade} anos`;
+}
+
 /** "Unidos da Várzea" -> "UN" (usado quando o time não tem escudo) */
 export function iniciaisDoTime(nome) {
   return String(nome ?? '')

@@ -6,6 +6,7 @@ import {
   erroVisivel,
   primeiroErro,
   validarNome,
+  validarIdade,
   validarNumeroCamisa,
   validarSelecao,
 } from '../../utils/validacao';
@@ -28,15 +29,18 @@ export function FormJogador({
   const [timeId, setTimeId] = useState('');
   const [nome, setNome] = useState('');
   const [numero, setNumero] = useState('');
+  const [idade, setIdade] = useState('');
   const [foto, setFoto] = useState(null);
   const [tocados, setTocados] = useState({});
   const numeroRef = useRef(null);
+  const idadeRef = useRef(null);
   const editando = Boolean(jogador);
 
   useEffect(() => {
     setTimeId(jogador?.timeId ?? '');
     setNome(jogador?.nome ?? '');
     setNumero(jogador?.numero ? String(jogador.numero) : '');
+    setIdade(jogador?.idade ? String(jogador.idade) : '');
     setFoto(jogador?.foto ?? null);
     setTocados({});
   }, [jogador]);
@@ -45,6 +49,7 @@ export function FormJogador({
     timeId: validarSelecao(timeId, { rotulo: 'a equipe' }),
     nome: validarNome(nome, { rotulo: 'nome do jogador' }),
     numero: validarNumeroCamisa(numero),
+    idade: validarIdade(idade),
   };
 
   function tocar(campo) {
@@ -52,10 +57,10 @@ export function FormJogador({
   }
 
   function enviar() {
-    setTocados({ timeId: true, nome: true, numero: true });
+    setTocados({ timeId: true, nome: true, numero: true, idade: true });
     if (primeiroErro(erros) || carregando) return;
 
-    onSubmit({ timeId, nome: nome.trim(), numero, foto });
+    onSubmit({ timeId, nome: nome.trim(), numero, idade, foto });
   }
 
   return (
@@ -116,6 +121,21 @@ export function FormJogador({
         mensagemErro={erroVisivel(tocados, erros, 'numero')}
         keyboardType="number-pad"
         maxLength={2}
+        returnKeyType="next"
+        blurOnSubmit={false}
+        onSubmitEditing={() => idadeRef.current?.focus()}
+      />
+
+      <FormField
+        ref={idadeRef}
+        label="Idade (opcional)"
+        placeholder="Ex.: 25"
+        value={idade}
+        onChangeText={setIdade}
+        onBlur={() => tocar('idade')}
+        mensagemErro={erroVisivel(tocados, erros, 'idade')}
+        keyboardType="number-pad"
+        maxLength={3}
       />
 
       <Button
