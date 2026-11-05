@@ -9,6 +9,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { Icone } from '../components/atoms/Icone';
 import { Label } from '../components/atoms/Label';
 import { AdminConfigScreen } from '../screens/AdminConfigScreen';
+import { AdminDashboardScreen } from '../screens/AdminDashboardScreen';
 import { AdminEquipesScreen } from '../screens/AdminEquipesScreen';
 import { AdminJogadoresScreen } from '../screens/AdminJogadoresScreen';
 import { AdminJogosScreen } from '../screens/AdminJogosScreen';
@@ -17,9 +18,18 @@ import { AdminSumulaScreen } from '../screens/AdminSumulaScreen';
 import { logout } from '../services/auth';
 import { cores, espacamentos } from '../theme';
 import { voltarAoTorcedor } from './acoes';
+import { ADMIN_OPCOES } from './adminOpcoes';
 import { opcoesCabecalho } from './opcoes';
 
 const Drawer = createDrawerNavigator();
+const COMPONENTES_ADMIN = {
+  AdminEquipes: AdminEquipesScreen,
+  AdminJogadores: AdminJogadoresScreen,
+  AdminJogos: AdminJogosScreen,
+  AdminSumula: AdminSumulaScreen,
+  AdminRecursos: AdminRecursosScreen,
+  AdminConfig: AdminConfigScreen,
+};
 
 function icone(nome) {
   return function DrawerIcon({ color }) {
@@ -70,6 +80,7 @@ export function AdminDrawer() {
   return (
     <Drawer.Navigator
       drawerContent={props => <ConteudoMenu {...props} />}
+      initialRouteName="AdminDashboard"
       screenOptions={{
         ...opcoesCabecalho,
         drawerActiveTintColor: cores.primaria,
@@ -79,59 +90,28 @@ export function AdminDrawer() {
         sceneStyle: styles.cena,
       }}>
       <Drawer.Screen
-        name="AdminEquipes"
-        component={AdminEquipesScreen}
+        name="AdminDashboard"
+        component={AdminDashboardScreen}
         options={{
-          title: 'Equipes',
-          drawerLabel: 'Equipes',
-          drawerIcon: icone('Users'),
+          title: 'Dashboard',
+          drawerLabel: 'Início',
+          drawerIcon: icone('House'),
         }}
       />
-      <Drawer.Screen
-        name="AdminJogadores"
-        component={AdminJogadoresScreen}
-        options={{
-          title: 'Jogadores',
-          drawerLabel: 'Jogadores',
-          drawerIcon: icone('UsersRound'),
-        }}
-      />
-      <Drawer.Screen
-        name="AdminJogos"
-        component={AdminJogosScreen}
-        options={{
-          title: 'Jogos',
-          drawerLabel: 'Jogos',
-          drawerIcon: icone('CalendarDays'),
-        }}
-      />
-      <Drawer.Screen
-        name="AdminSumula"
-        component={AdminSumulaScreen}
-        options={{
-          title: 'Súmula',
-          drawerLabel: 'Súmula',
-          drawerIcon: icone('ClipboardList'),
-        }}
-      />
-      <Drawer.Screen
-        name="AdminRecursos"
-        component={AdminRecursosScreen}
-        options={{
-          title: 'Recursos nativos',
-          drawerLabel: 'Câmera e GPS',
-          drawerIcon: icone('Camera'),
-        }}
-      />
-      <Drawer.Screen
-        name="AdminConfig"
-        component={AdminConfigScreen}
-        options={{
-          title: 'Configurações',
-          drawerLabel: 'Configurações',
-          drawerIcon: icone('Settings'),
-        }}
-      />
+      {ADMIN_OPCOES.map(opcao => {
+        return (
+          <Drawer.Screen
+            key={opcao.rota}
+            name={opcao.rota}
+            component={COMPONENTES_ADMIN[opcao.rota]}
+            options={{
+              title: opcao.titulo,
+              drawerLabel: opcao.rotuloMenu,
+              drawerIcon: icone(opcao.icone),
+            }}
+          />
+        );
+      })}
     </Drawer.Navigator>
   );
 }
