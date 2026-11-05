@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { cores, espacamentos, raios } from '../../theme';
@@ -10,18 +10,36 @@ import {
   validarSelecao,
 } from '../../utils/validacao';
 import { Button } from '../atoms/Button';
+import { IconButton } from '../atoms/IconButton';
+import { Label } from '../atoms/Label';
 import { ErrorMessage } from '../molecules/ErrorMessage';
 import { FormField } from '../molecules/FormField';
 import { SelectField } from '../molecules/SelectField';
 import { SeletorImagem } from '../molecules/SeletorImagem';
 
-export function FormJogador({ times, onSubmit, carregando = false, erro = null }) {
+export function FormJogador({
+  jogador,
+  times,
+  onSubmit,
+  onCancelar,
+  carregando = false,
+  erro = null,
+}) {
   const [timeId, setTimeId] = useState('');
   const [nome, setNome] = useState('');
   const [numero, setNumero] = useState('');
   const [foto, setFoto] = useState(null);
   const [tocados, setTocados] = useState({});
   const numeroRef = useRef(null);
+  const editando = Boolean(jogador);
+
+  useEffect(() => {
+    setTimeId(jogador?.timeId ?? '');
+    setNome(jogador?.nome ?? '');
+    setNumero(jogador?.numero ? String(jogador.numero) : '');
+    setFoto(jogador?.foto ?? null);
+    setTocados({});
+  }, [jogador]);
 
   const erros = {
     timeId: validarSelecao(timeId, { rotulo: 'a equipe' }),
@@ -38,14 +56,23 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
     if (primeiroErro(erros) || carregando) return;
 
     onSubmit({ timeId, nome: nome.trim(), numero, foto });
-    setNome('');
-    setFoto(null);
-    setNumero('');
-    setTocados({});
   }
 
   return (
     <View style={styles.form}>
+      {editando ? (
+        <View style={styles.topo}>
+          <Label variante="subtitulo">Editar Jogador</Label>
+          <IconButton
+            nome="X"
+            rotulo="Fechar formulário"
+            variante="transparente"
+            tamanho={28}
+            aoPressionar={onCancelar}
+          />
+        </View>
+      ) : null}
+
       <ErrorMessage mensagem={erro} />
 
       <SeletorImagem
@@ -92,8 +119,8 @@ export function FormJogador({ times, onSubmit, carregando = false, erro = null }
       />
 
       <Button
-        title="Cadastrar Jogador"
-        icone="UserPlus"
+        title={editando ? 'Salvar Alterações' : 'Cadastrar Jogador'}
+        icone={editando ? undefined : 'UserPlus'}
         onPress={enviar}
         carregando={carregando}
         desabilitado={carregando}
@@ -110,5 +137,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: cores.borda,
     padding: espacamentos.md,
+  },
+  topo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

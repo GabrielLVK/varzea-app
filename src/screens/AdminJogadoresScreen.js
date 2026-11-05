@@ -10,7 +10,12 @@ import { SectionCard } from '../components/molecules/SectionCard';
 import { SuccessMessage } from '../components/molecules/SuccessMessage';
 import { FormJogador } from '../components/organisms/FormJogador';
 import { ScreenTemplate } from '../components/templates/ScreenTemplate';
-import { criarJogador, listarJogadores, removerJogador } from '../services/jogador';
+import {
+  atualizarJogador,
+  criarJogador,
+  listarJogadores,
+  removerJogador,
+} from '../services/jogador';
 import { listarTimes } from '../services/time';
 import { cores, espacamentos, raios } from '../theme';
 
@@ -22,6 +27,8 @@ export function AdminJogadoresScreen() {
   const [erroLista, setErroLista] = useState(null);
   const [erroForm, setErroForm] = useState(null);
   const [sucesso, setSucesso] = useState(null);
+  const [editando, setEditando] = useState(null);
+  const [formKey, setFormKey] = useState(0);
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -50,15 +57,34 @@ export function AdminJogadoresScreen() {
     setSalvando(true);
     setErroForm(null);
     try {
-      await criarJogador(dados);
-      const time = times.find(item => item.id === dados.timeId);
-      setSucesso(`Jogador "${dados.nome}" adicionado ao ${time?.nome ?? 'time'}!`);
+      if (editando) {
+        await atualizarJogador(editando.id, dados);
+        const time = times.find(item => item.id === dados.timeId);
+        setSucesso(`Jogador "${dados.nome}" atualizado no ${time?.nome ?? 'time'}!`);
+        setEditando(null);
+      } else {
+        await criarJogador(dados);
+        const time = times.find(item => item.id === dados.timeId);
+        setSucesso(`Jogador "${dados.nome}" adicionado ao ${time?.nome ?? 'time'}!`);
+        setFormKey(atual => atual + 1);
+      }
       await carregar();
     } catch (e) {
       setErroForm(e.message);
     } finally {
       setSalvando(false);
     }
+  }
+
+  function abrirEdicao(jogador) {
+    setErroForm(null);
+    setSucesso(null);
+    setEditando(jogador);
+  }
+
+  function cancelarEdicao() {
+    setErroForm(null);
+    setEditando(null);
   }
 
   function handleExcluir(jogador) {
@@ -114,8 +140,11 @@ export function AdminJogadoresScreen() {
           <ListaVazia mensagem="Cadastre uma equipe antes de adicionar jogadores." />
         ) : (
           <FormJogador
+            key={editando?.id ?? `novo-${formKey}`}
+            jogador={editando}
             times={times}
             onSubmit={handleSubmit}
+            onCancelar={cancelarEdicao}
             carregando={salvando}
             erro={erroForm}
           />
@@ -132,7 +161,9 @@ export function AdminJogadoresScreen() {
                 {elenco.map(jogador => (
                   <AdminListItem
                     key={jogador.id}
+                    aoEditar={() => abrirEdicao(jogador)}
                     aoExcluir={() => handleExcluir(jogador)}
+                    rotuloEditar={`Editar ${jogador.nome}`}
                     rotuloExcluir={`Excluir ${jogador.nome}`}>
                     <View style={styles.conteudoItem}>
                       <View style={styles.numero}>

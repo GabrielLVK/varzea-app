@@ -58,6 +58,39 @@ export async function criarJogador({ timeId, nome, numero, foto = null }) {
   return novo;
 }
 
+export async function atualizarJogador(id, { timeId, nome, numero, foto = null }) {
+  await aguardar();
+  const jogadores = await obterColecao(CHAVES.jogadores, JOGADORES_SEED);
+
+  const numeroInt = Number(numero);
+  const repetido = jogadores.some(
+    jogador =>
+      jogador.id !== id &&
+      jogador.timeId === timeId &&
+      jogador.numero === numeroInt,
+  );
+  if (repetido) {
+    throw new ApiError(
+      `Já existe um jogador com a camisa ${numeroInt} nessa equipe.`,
+      409,
+      'local',
+    );
+  }
+
+  const atualizados = jogadores.map(jogador =>
+    jogador.id === id
+      ? { ...jogador, timeId, nome: nome.trim(), numero: numeroInt, foto }
+      : jogador,
+  );
+  const atualizado = atualizados.find(jogador => jogador.id === id);
+  if (!atualizado) {
+    throw new ApiError('Jogador não encontrado.', 404, 'local');
+  }
+
+  await salvarColecao(CHAVES.jogadores, atualizados);
+  return atualizado;
+}
+
 export async function removerJogador(id) {
   await aguardar();
   const jogadores = await obterColecao(CHAVES.jogadores, JOGADORES_SEED);
