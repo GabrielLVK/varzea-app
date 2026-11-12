@@ -110,6 +110,26 @@ export async function atualizarJogador(
 export async function removerJogador(id) {
   await aguardar();
   const jogadores = await obterColecao(CHAVES.jogadores, JOGADORES_SEED);
+  const jogador = jogadores.find(item => item.id === id);
+  if (!jogador) {
+    throw new ApiError('Jogador não encontrado.', 404, 'local');
+  }
+
+  const possuiHistorico = [
+    jogador.gols,
+    jogador.assistencias,
+    jogador.amarelos,
+    jogador.vermelhos,
+    jogador.golsSofridos,
+  ].some(valor => Number(valor ?? 0) > 0);
+  if (possuiHistorico) {
+    throw new ApiError(
+      `Não é possível excluir "${jogador.nome}", pois existem estatísticas registradas para ele.`,
+      409,
+      'local',
+    );
+  }
+
   await salvarColecao(
     CHAVES.jogadores,
     jogadores.filter(jogador => jogador.id !== id),

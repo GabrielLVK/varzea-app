@@ -79,7 +79,7 @@ desbloqueado e não vai para backup nem para outro aparelho.
 | Sobre | o que é o app e como os dados funcionam |
 | Partida | detalhe do confronto e os dois elencos |
 | Painel · Equipes | cadastrar, editar e excluir equipes sem partidas finalizadas |
-| Painel · Jogadores | montar o elenco de cada equipe |
+| Painel · Jogadores | montar o elenco de cada equipe sem apagar jogadores com estatísticas |
 | Painel · Jogos | agendar confrontos |
 | Painel · Súmula | lançar placar e eventos (gols e cartões) |
 | Painel · Câmera e GPS | estado das permissões e teste de cada recurso nativo |

@@ -89,22 +89,26 @@ export function AdminJogadoresScreen() {
   }
 
   function handleExcluir(jogador) {
-    Alert.alert('Excluir jogador', `Remover "${jogador.nome}" do elenco?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await removerJogador(jogador.id);
-            setSucesso(`Jogador "${jogador.nome}" removido.`);
-            await carregar();
-          } catch (e) {
-            Alert.alert('Erro', e.message);
+    Alert.alert(
+      'Excluir jogador',
+      `Remover "${jogador.nome}" do elenco? Jogadores com estatísticas registradas não podem ser excluídos.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await removerJogador(jogador.id);
+              setSucesso(`Jogador "${jogador.nome}" removido.`);
+              await carregar();
+            } catch (e) {
+              Alert.alert('Erro', e.message);
+            }
           }
         },
-      },
-    ]);
+      ],
+    );
   }
 
   if (carregando || erroLista) {
