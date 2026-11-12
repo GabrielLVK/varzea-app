@@ -134,6 +134,42 @@ export async function publicarSumula(id, { placarMandante, placarVisitante, even
 
   const golsMandante = Number(placarMandante);
   const golsVisitante = Number(placarVisitante);
+  const eventosDaPartida = jogadores.filter(
+    jogador =>
+      jogador.timeId === partida.mandanteId ||
+      jogador.timeId === partida.visitanteId,
+  );
+
+  const golsPorTime = eventosDaPartida.reduce(
+    (totais, jogador) => {
+      const gols = Number(eventos[jogador.id]?.gols ?? 0);
+      if (!Number.isInteger(gols) || gols < 0) {
+        throw new ApiError('A quantidade de gols dos jogadores é inválida.', 400, 'local');
+      }
+
+      totais[jogador.timeId] += gols;
+      return totais;
+    },
+    {
+      [partida.mandanteId]: 0,
+      [partida.visitanteId]: 0,
+    },
+  );
+
+  if (golsPorTime[partida.mandanteId] > golsMandante) {
+    throw new ApiError(
+      'A soma dos gols dos jogadores do mandante não pode ser maior que o placar.',
+      400,
+      'local',
+    );
+  }
+  if (golsPorTime[partida.visitanteId] > golsVisitante) {
+    throw new ApiError(
+      'A soma dos gols dos jogadores do visitante não pode ser maior que o placar.',
+      400,
+      'local',
+    );
+  }
 
   // 1. placar e status da partida
   const partidasAtualizadas = partidas.map(item =>
