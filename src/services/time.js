@@ -1,3 +1,4 @@
+import { STATUS_PARTIDA } from '../constants/campeonato';
 import { ApiError } from './api';
 import { aguardar } from './config';
 import {
@@ -107,6 +108,24 @@ export async function removerTime(id) {
     obterColecao(CHAVES.partidas, PARTIDAS_SEED),
     obterColecao(CHAVES.classificacao, CLASSIFICACAO_SEED),
   ]);
+
+  const time = times.find(item => item.id === id);
+  if (!time) {
+    throw new ApiError('Equipe não encontrada.', 404, 'local');
+  }
+
+  const partidasFinalizadas = partidas.filter(
+    partida =>
+      (partida.mandanteId === id || partida.visitanteId === id) &&
+      partida.status === STATUS_PARTIDA.finalizado,
+  );
+  if (partidasFinalizadas.length > 0) {
+    throw new ApiError(
+      `Não é possível excluir "${time.nome}", pois ela já possui partida(s) finalizada(s) no histórico.`,
+      409,
+      'local',
+    );
+  }
 
   await Promise.all([
     salvarColecao(

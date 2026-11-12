@@ -78,7 +78,7 @@ desbloqueado e não vai para backup nem para outro aparelho.
 | Times | busca de equipes e elenco expansível |
 | Sobre | o que é o app e como os dados funcionam |
 | Partida | detalhe do confronto e os dois elencos |
-| Painel · Equipes | cadastrar, editar e excluir equipes |
+| Painel · Equipes | cadastrar, editar e excluir equipes sem partidas finalizadas |
 | Painel · Jogadores | montar o elenco de cada equipe |
 | Painel · Jogos | agendar confrontos |
 | Painel · Súmula | lançar placar e eventos (gols e cartões) |

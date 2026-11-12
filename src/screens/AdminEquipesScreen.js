@@ -87,7 +87,7 @@ export function AdminEquipesScreen() {
   function handleExcluir(time) {
     Alert.alert(
       'Excluir equipe',
-      `Excluir "${time.nome}"? O elenco e as partidas dessa equipe também serão removidos.`,
+      `Excluir "${time.nome}"? O elenco e as partidas ainda agendadas dessa equipe também serão removidos. Partidas finalizadas protegem a equipe contra exclusão.`,
       [
         { text: 'Cancelar', style: 'cancel' },
         {
